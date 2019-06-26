@@ -1,0 +1,20 @@
+{
+  "name": "Medapp Inventory Mangement",
+  "short_name": "Medapp Inventory",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "Inventory Management System for medapp.in",
+  "icons": [
+    {
+      "src": "/logo-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/logo-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

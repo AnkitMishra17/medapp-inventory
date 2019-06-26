@@ -1,0 +1,59 @@
+<%- include("../partials/header.ejs") %>
+<link rel="stylesheet" href="/bootstrap.min.css">
+  <div class="container p-2">
+    <div class="card p-3" >
+      <div class="card-header" >
+        <div class="card-title">
+          <div class="mt-3" align="center">
+            <p style="font-size:30px;" class="font-weight-bold">Inventory Item History</p>
+          </div>
+        </div>
+        <a class="btn btn-primary float-right m-2" href="/supervisor/logout">Logout</a>
+        <a class="btn btn-primary float-right m-2" href="/supervisor/dashboard">Dashboard</a> 
+        <a class="btn btn-primary float-right m-2" href="/supervisor/inventory">Inventory</a> 
+        </div>
+    <% if(item) { %>
+        <div class="card m-2">
+            <div class="card-header">
+              <h5>
+                  <span>Item - <strong><%= item.product.name %></strong></span>
+                  <span class="float-right">Total Quantity: <strong><%= item.totalQuantity %></strong></span>
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+              <table class="table table-hover text-center">
+                <thead>
+                    <tr class="table-primary">
+                      <th scope="col">Date</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Detail</th>
+                      <th scope="col">Quantity</th>
+                    </tr> 
+                </thead>
+                <tbody>
+            <% item.history.forEach((stage) => { %>
+              <tr>
+                <td><%= stage.date.toDateString() %></td>
+                <td><%= stage.isAdded ? "Added to inventory" : (stage.isUsed ? "Used from inventory" : "Unspecified") %></td>
+                <td><%= stage.detail %></td>
+                <td><%= stage.quantity %></td>
+              </tr>
+            <% }) %>
+                </tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <h5><span class="float-right">Available Quantity: <strong><%= item.leftQuantity %></strong></span></h5>
+          </div>
+        <% } else { %>
+          <div class="jumbotron text-muted text-center m-2">
+            Nothing to show!
+          </div>
+        <% } %>
+    </div>
+    </div>
+  </div>
+<%- include("../partials/footer.ejs") %>

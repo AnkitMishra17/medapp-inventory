@@ -1,0 +1,26 @@
+<%- include("../partials/header.ejs") %>
+<link rel="stylesheet" href="/bootstrap.min.css">
+<div class="wrapper1">
+  <div class="container p-5 bounceIn">
+    <div class="card text-white bg-dark mb-3">
+      <div class="card-header">
+        <h3>Admin Dashboard</h3>
+      </div>
+      <div class="card-body">
+        <div class="container text-center">
+          <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a class="btn btn-primary m-2" href="/medapp-inventory-admin/orders ">Orders
+            <span class="badge badge-primary badge-pill"><i class="fas fa-chevron-right"></i></span>
+          </a>
+          </li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-footer">
+       <a class="btn btn-primary float-right" href="/medapp-inventory-admin/logout">Logout</a>
+      </div>
+    </div>
+  </div>
+  </div>
+<%- include("../partials/footer.ejs") %>

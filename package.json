@@ -1,0 +1,26 @@
+{
+  "name": "medapp-inventory-management",
+  "version": "1.0.0",
+  "description": "inventory management system for medapp.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/app.js"
+  },
+  "author": "Deepak Sharma",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^2.0.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-messages": "^1.0.1",
+    "express-session": "^1.16.1",
+    "express-validator": "^5.3.1",
+    "helmet": "^3.16.0",
+    "moment": "^2.24.0",
+    "mongoose": "^5.5.2",
+    "multer": "^1.4.1",
+    "sharp": "^0.22.0"
+  }
+}

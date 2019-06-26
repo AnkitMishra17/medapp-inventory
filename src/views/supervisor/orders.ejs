@@ -1,0 +1,162 @@
+<%- include("../partials/header.ejs") %>
+<link rel="stylesheet" href="/bootstrap.min.css">
+  <div class="container p-4 animated fadeInLeft slow">
+    <div class="card p-3" >
+      <div class="card-header" >
+        <div class="card-title">
+          <div class="mt-3" align="center">
+            <p style="font-size:30px;" class="font-weight-bold">Orders</p>
+          </div>
+        </div>
+        <a class="btn btn-primary float-right m-2" href="/supervisor/logout">Logout</a>
+        <a class="btn btn-primary float-right m-2" href="/supervisor/dashboard">Dashboard</a>
+        <a class="btn btn-primary float-right m-2" href="/supervisor/orders/new">New Order</a>
+      </div>
+      <form action="/supervisor/orders" method="get" novalidate class="mt-5">
+            <div class="form-group">
+              <label for="option" style="font-size:24px;">View By</label>
+              <select class="form-control" name="option" value="<%= viewBy %>" id="viewBy" required>
+                <option value="" <% if(!viewBy) { %>selected<% } %> disabled>Choose</option>
+                <option value="month" <% if(viewBy === "month") { %>selected <% } %>>Month</option>
+                <option value="year" <% if(viewBy === "year") { %>selected <% } %>>Year</option>
+              </select>
+            </div>
+            <div class="form-group hide" id="month" style="display: none">
+              <label for="month" style="font-size:24px;">Month</label>
+              <select class="form-control clear-select" name="month" required>
+                <option value="" <% if(!month) { %>selected<% } %> disabled>Choose</option>
+                <% let i = 1 %>
+                <% monthArray.forEach((m) => {%>
+                  <option value="<%= i %>" <% if(month === i) { %>selected <% } %>><%= m %></option>
+                <% ++i }) %>
+              </select>
+            </div>
+            <div class="form-group hide" id="year" style="display: none">
+              <label for="year" style="font-size:24px;">Year</label>
+              <select class="form-control clear-select" name="year" required>
+                <option value="" <% if(!year) { %>selected<% } %> disabled>Choose</option>
+                <% yearArray.forEach((y) => { %>
+                  <option value="<%= y %>" <% if(year === y) { %>selected <% } %>><%= y %></option>
+                <% }) %>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary hide" id="search" style="display: none">Search</button>
+          </form>
+    <% if(orders.length > 0 && viewBy) { %>
+        <div class="card m-3">
+            <div class="card-header">
+              <% if(viewBy === "month") { %>
+                Orders of <%= monthName %> <%= year %>
+              <% } else if(viewBy === "year") { %>
+                Orders of year <%= year %>
+              <% } %>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+              <table class="table table-hover text-center">
+                <thead>
+                    <tr class="table-primary">
+              <th scope="col">Product</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Vendor</th>
+              <th scope="col">Date</th>
+              <th scope="col">Current Status</th>
+              <th scope="col">Change Status</th>
+              <th scope="col">View history</th>
+            </tr>
+                </thead>
+                <tbody>
+            <% orders.forEach((order) => { %>
+              <tr>
+                <td><%= order.product.name %></td>
+                <td><%= order.quantity %></td>
+                <td><%= order.vendor ? order.vendor.name : "To be selected" %></td>
+                <td><%= order.track.ordered.date.toDateString() %></td>
+               <% let status %>
+                <% for (const stage of Object.entries(order.track)) { %>
+                  <% if(stage[0] == "$init") continue %>
+                  <% if(!stage[1].status) { %> 
+                      <td scope="col"><%= status %></td>
+                      <% if(stage[0] == "invoiceUploaded") { %>
+                          <td><form action="/supervisor/orders/uploadInv?id=<%= order._id %>" method="post" enctype="multipart/form-data" class="text-left"><b>Upload Invoice : </b><input type="file" name="invImage" class="form-control" accept="image/png, image/jpg, image/jpeg"> <input type="submit" class="btn btn-primary btn-sm form-control" value="Upload"></form></td>
+                          <% break %>
+                      <% } else { %>
+                          <td>--</td>
+                          <% break %>
+                      <% } %>
+                  <% } %>
+                  <% if(stage[0] == "orderCompleted" && stage[1].status) { %>
+                    <td>Order Completed</td>
+                    <td>--</td>
+                  <% } %>
+
+                  <% status = stage[1].superMsg %>
+                <% } %>
+                <td><a href="/supervisor/orders/history?id=<%= order._id %>">View</a>
+              </tr>
+            <% }) %>
+                </tbody>
+              </table>
+              </div>
+            </div>
+          </div>
+        <% } else if(!viewBy){ %>
+          <div class="jumbotron text-muted text-center m-2">
+            Select an option
+          </div>
+        <% } else { %>
+          <div class="jumbotron text-muted text-center m-2">
+            No orders for this month/year.
+          </div>
+        <% } %>
+    </div>
+<script>
+    const $viewBy = document.querySelector("#viewBy")
+    const $month = document.querySelector("#month")
+    const $year = document.querySelector("#year")
+    const $search = document.querySelector("#search")
+    const $hide_all = document.querySelectorAll(".hide")
+    const $clear_all = document.querySelectorAll(".clear-select")
+    const preViewBy = <% if(!viewBy) { %>null<% }else { %>"<%= viewBy %>"<% } %>
+
+    function hide_all_selects(elements) {
+      for ( const element of elements) {
+        element.style.display = "none"
+      }
+    }
+
+    function clear_all_selects (selects) {
+      for (const select of selects) {
+        for(const option of select.options) {
+          option.selected = false
+        }
+        select.options[0].selected = true
+      }
+    }
+
+    function hide_specific_select(viewBy) {
+      if(viewBy === "month") {
+        hide_all_selects($hide_all)
+        $month.style.display = "block"
+        $year.style.display = "block"
+        $search.style.display = "block"
+      } else if(viewBy === "year") {
+        hide_all_selects($hide_all)
+        $year.style.display = "block"
+        $search.style.display = "block"
+      }
+    }
+
+    if($viewBy.value == preViewBy) {
+      hide_specific_select($viewBy.value)
+    }
+
+    $viewBy.addEventListener("change", (e) => {
+      hide_specific_select(e.target.value)
+      clear_all_selects($clear_all)
+    })
+
+</script>
+    </div>
+  </div>
+<%- include("../partials/footer.ejs") %>

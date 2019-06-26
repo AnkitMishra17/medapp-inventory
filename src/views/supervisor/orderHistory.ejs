@@ -1,0 +1,47 @@
+<%- include("../partials/header.ejs") %>
+<link rel="stylesheet" href="/bootstrap.min.css">
+<div style="background-image: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%); min-height:100vh;">
+  <div class="container p-5">
+    <div class="card bg-light mb-3" style="max-width: 60rem;">
+      <div class="card-header">
+        <h2 class="display-5">Order History <a class="btn btn-outline-primary float-right m-2" href="/supervisor/dashboard">Dashboard</a> <a class="btn btn-outline-primary float-right m-2" href="/supervisor/orders">Orders</a></h2>
+      </div>
+      <div class="card-body">
+        <% if(order) { %>
+          <div class="container">
+            <h5>Product : <%= order.product.name %></h5>
+            <h6>Quantity: <%= order.quantity %></h6>
+            <h6>Vendor: <% if(order.vendor) { %> <%= order.vendor.name %> - <%= order.vendor.location.city %>, <%= order.vendor.location.state %> <% } else { %><%= "Not selected" %><% } %></h6>
+            <h6>Date: <%= order.createdAt.toDateString() %></h6>
+            <% if(order.invoiceImage) { %>
+            <h6>Invoice: <a class="btn btn-sm btn-warning" href="/order/invoice?id=<%= order._id %>" download>Download</a></h6>
+            <a href="/order/invoice?id=<%= order._id %>"><img src="/order/invoice?id=<%= order._id %>" style="width: 20%"></a>
+            <% } %>
+          </div>
+          <div class="row p-3">
+          <% for (const stage of Object.entries(order.track)) { %>
+              <% if(stage[0] == "$init") continue %>
+              <% if(stage[0] == "orderCompleted") { %>
+                <% if(stage[1].status) { %>
+                  <div class="col col-12 mt-2"><div class="bg-success text-center p-1"><h4><%= stage[1].superMsg %></h4><small><%= stage[1].date.toDateString() %> <%= stage[1].date.toLocaleTimeString() %></small></div></div>
+                <% break } else { %>
+                  <div class="col col-12 mt-2"><div class="bg-secondary text-center p-1"><h4><%= stage[1].superMsg %></h4></div></div>
+                <% break } %>
+              <% } %>
+              <% if(stage[1].status) { %>
+                <div class="col col-12 mt-2"><div class="bg-success text-center p-1"><h4><%= stage[1].superMsg %></h4><small><%= stage[1].date.toDateString() %> <%= stage[1].date.toLocaleTimeString() %></small></div></div>
+                <div class="col col-12"><div class="text-center"><i class="fas fa-arrow-down"></i></div></div>
+              <% } else { %>
+                <div class="col col-12 mt-2"><div class="bg-secondary text-center p-1"><h4><%= stage[1].superMsg %></h4></div></div>
+                <div class="col col-12"><div class="text-center"><i class="fas fa-arrow-down"></i></div></div>
+              <% } %>
+          <% } %>
+          </div>
+        <% } else { %>  
+            <h4 class="text-muted text-secondary">Nothing to show!</h4>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include("../partials/footer.ejs") %>
